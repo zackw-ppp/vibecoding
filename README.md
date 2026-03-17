@@ -57,6 +57,10 @@
 - 点击提取没反应：
   - 刷新漫画网页后再点一次插件
   - 确认插件还在启用状态（`chrome://extensions/`）
+- 出现 `Could not establish connection. Receiving end does not exist.`：
+  - 先刷新目标网页，再点插件（已内置自动重试一次）
+  - 确认你不是在 `chrome://`、扩展商店、或新标签页里使用（这些页面不允许注入）
+  - 如果是 `file://` 本地 html，请在 `chrome://extensions/` 给本扩展打开「允许访问文件网址」
 - 下载数量是 0：
   - 先滚动页面让图片加载
   - 把最小宽高调低
@@ -66,3 +70,41 @@
 ## 说明
 - 默认会按 URL 去重并忽略 query 参数，减少重复下载。
 - 对使用特殊签名 URL 或复杂反爬的网站，可能需要按站点做定制规则。
+
+
+## PR / merge / conflict 是什么？（小白解释）
+- **PR（Pull Request）**：你改了代码后，发起“请求合并”。
+- **merge**：把你的分支改动合并到主分支（通常叫 `main`）。
+- **solve conflict（解决冲突）**：同一段代码被两边改了，Git 不知道该保留哪一版，需要你手动选。
+
+### 你现在这个仓库的实际情况
+- 当前本地只有 `work` 分支，没有检测到 `main` 分支或远程仓库。
+- 所以你在网页上看到的“需要 solve conflict”，大概率是 **GitHub 上远程分支** 的提示，不是你本地这个目录里的真实冲突。
+
+### 最简单处理流程（命令行）
+如果你是在 GitHub 上协作，建议这样做：
+
+1. 先把 main 拉到本地
+   - `git fetch origin`
+   - `git checkout main`
+   - `git pull origin main`
+
+2. 回到你的开发分支并合并 main
+   - `git checkout work`
+   - `git merge main`
+
+3. 如果有冲突，打开冲突文件，删除这三类标记并保留你想要的内容：
+   - `<<<<<<<`
+   - `=======`
+   - `>>>>>>>`
+
+4. 标记已解决并提交
+   - `git add README.md content.js manifest.json popup.js`
+   - `git commit -m "resolve merge conflicts"`
+
+5. 推送并回到 PR 页面
+   - `git push`
+
+### 怎么确认冲突真的解决了
+- 运行：`git status`
+- 如果没有 `both modified` / `unmerged paths`，就表示冲突已解决。

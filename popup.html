@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Manga Extractor</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <h1>漫画图片提取器</h1>
+
+      <section class="grid">
+        <label>最小宽度 <input id="minWidth" type="number" value="600" /></label>
+        <label>最小高度 <input id="minHeight" type="number" value="800" /></label>
+        <label>最小宽高比 <input id="minRatio" type="number" step="0.01" value="0.55" /></label>
+        <label>最大宽高比 <input id="maxRatio" type="number" step="0.01" value="0.90" /></label>
+      </section>
+
+      <section class="grid">
+        <label>文件前缀 <input id="prefix" type="text" value="manga" /></label>
+        <label>章节名 <input id="chapter" type="text" value="chapter" /></label>
+      </section>
+
+      <div class="actions">
+        <button id="collectBtn">1. 提取当前页</button>
+        <button id="downloadBtn" disabled>2. 下载结果</button>
+      </div>
+
+      <p id="status">等待操作</p>
+      <ol id="preview"></ol>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

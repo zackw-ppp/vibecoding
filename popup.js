@@ -5,6 +5,13 @@ const el = {
   minHeight: document.getElementById('minHeight'),
   minRatio: document.getElementById('minRatio'),
   maxRatio: document.getElementById('maxRatio'),
+  minWidthValue: document.getElementById('minWidthValue'),
+  minHeightValue: document.getElementById('minHeightValue'),
+  minRatioValue: document.getElementById('minRatioValue'),
+  maxRatioValue: document.getElementById('maxRatioValue'),
+  ratioMinBox: document.getElementById('ratioMinBox'),
+  ratioMaxBox: document.getElementById('ratioMaxBox'),
+  ratioHint: document.getElementById('ratioHint'),
   prefix: document.getElementById('prefix'),
   chapter: document.getElementById('chapter'),
   collectBtn: document.getElementById('collectBtn'),
@@ -24,6 +31,33 @@ function renderPreview(images) {
     li.textContent = `${String(i + 1).padStart(4, '0')}  ${img.width}x${img.height}  ${img.src}`;
     el.preview.appendChild(li);
   });
+}
+
+function syncSliderLabels() {
+  let minRatio = Number(el.minRatio.value);
+  let maxRatio = Number(el.maxRatio.value);
+
+  if (minRatio > maxRatio) {
+    if (document.activeElement === el.minRatio) {
+      maxRatio = minRatio;
+      el.maxRatio.value = String(maxRatio);
+    } else {
+      minRatio = maxRatio;
+      el.minRatio.value = String(minRatio);
+    }
+  }
+
+  el.minWidthValue.textContent = String(Math.round(Number(el.minWidth.value)));
+  el.minHeightValue.textContent = String(Math.round(Number(el.minHeight.value)));
+  el.minRatioValue.textContent = minRatio.toFixed(2);
+  el.maxRatioValue.textContent = maxRatio.toFixed(2);
+
+  const scale = 90;
+  const minWidthPx = Math.max(14, Math.min(140, Math.round(minRatio * scale)));
+  const maxWidthPx = Math.max(14, Math.min(140, Math.round(maxRatio * scale)));
+  el.ratioMinBox.style.width = `${minWidthPx}px`;
+  el.ratioMaxBox.style.width = `${maxWidthPx}px`;
+  el.ratioHint.textContent = `当前允许范围：${minRatio.toFixed(2)} ~ ${maxRatio.toFixed(2)}（越小越竖版）`;
 }
 
 async function getActiveTab() {
@@ -92,6 +126,11 @@ async function requestCollectImages(tabId, options, retry = true) {
   }
 }
 
+for (const slider of [el.minWidth, el.minHeight, el.minRatio, el.maxRatio]) {
+  slider.addEventListener('input', syncSliderLabels);
+}
+syncSliderLabels();
+
 el.collectBtn.addEventListener('click', async () => {
   try {
     const tab = await getActiveTab();
@@ -121,7 +160,7 @@ el.collectBtn.addEventListener('click', async () => {
 
 el.downloadBtn.addEventListener('click', async () => {
   if (!latestImages.length) return;
-  setStatus('下载中...');
+  setStatus('打包 ZIP 中...');
   try {
     const response = await chrome.runtime.sendMessage({
       type: 'DOWNLOAD_IMAGES',
@@ -137,7 +176,7 @@ el.downloadBtn.addEventListener('click', async () => {
       return;
     }
 
-    setStatus(`下载任务已提交：${response.count} 张`);
+    setStatus(`ZIP 已开始下载：${response.zipName}（共 ${response.count} 张）`);
   } catch (error) {
     setStatus(`下载失败：${String(error)}`);
   }

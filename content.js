@@ -1,9 +1,4 @@
 (() => {
-  if (window.__mangaExtractorInjected) {
-    return;
-  }
-  window.__mangaExtractorInjected = true;
-
   const DEFAULTS = {
     minWidth: 600,
     minHeight: 800,
@@ -112,11 +107,6 @@
   }
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-    if (message?.type === 'PING') {
-      sendResponse({ ok: true });
-      return;
-    }
-
     if (message?.type !== 'COLLECT_IMAGES') return;
 
     const images = collectImages(message.options);

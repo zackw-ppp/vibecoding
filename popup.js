@@ -26,9 +26,9 @@ function renderPreview(images) {
   });
 }
 
-async function getActiveTab() {
+async function getActiveTabId() {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-  return tabs[0] || null;
+  return tabs[0]?.id;
 }
 
 function collectOptions() {
@@ -40,70 +40,19 @@ function collectOptions() {
   };
 }
 
-function isInjectableUrl(url = '') {
-  return /^(https?:|file:)/.test(url);
-}
-
-function isReceivingEndError(error) {
-  const text = String(error?.message || error || '');
-  return text.includes('Receiving end does not exist');
-}
-
-async function injectContentScript(tabId) {
-  try {
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      files: ['content.js']
-    });
-  } catch (error) {
-    throw new Error(`无法注入脚本：${String(error.message || error)}`);
-  }
-}
-
-async function ensureContentScriptReady(tab) {
-  if (!tab?.id) {
-    throw new Error('未找到活动标签页');
-  }
-
-  if (!isInjectableUrl(tab.url || '')) {
-    throw new Error('当前页面不支持（请在 http/https 网页使用，不支持 chrome:// 页面）');
-  }
-
-  try {
-    const probe = await chrome.tabs.sendMessage(tab.id, { type: 'PING' });
-    if (probe?.ok) return;
-  } catch {
-    await injectContentScript(tab.id);
-  }
-}
-
-async function requestCollectImages(tabId, options, retry = true) {
-  try {
-    return await chrome.tabs.sendMessage(tabId, {
-      type: 'COLLECT_IMAGES',
-      options
-    });
-  } catch (error) {
-    if (retry && isReceivingEndError(error)) {
-      await injectContentScript(tabId);
-      return requestCollectImages(tabId, options, false);
-    }
-    throw error;
-  }
-}
-
 el.collectBtn.addEventListener('click', async () => {
   try {
-    const tab = await getActiveTab();
-    if (!tab) {
+    const tabId = await getActiveTabId();
+    if (!tabId) {
       setStatus('未找到活动标签页');
       return;
     }
 
     setStatus('提取中...');
-    await ensureContentScriptReady(tab);
-
-    const response = await requestCollectImages(tab.id, collectOptions(), true);
+    const response = await chrome.tabs.sendMessage(tabId, {
+      type: 'COLLECT_IMAGES',
+      options: collectOptions()
+    });
 
     if (!response?.ok) {
       setStatus('提取失败');
@@ -115,7 +64,7 @@ el.collectBtn.addEventListener('click', async () => {
     el.downloadBtn.disabled = latestImages.length === 0;
     setStatus(`提取完成：${latestImages.length} 张`);
   } catch (error) {
-    setStatus(`提取失败：${String(error.message || error)}`);
+    setStatus(`提取失败：${String(error)}`);
   }
 });
 

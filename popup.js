@@ -26,9 +26,9 @@ function renderPreview(images) {
   });
 }
 
-async function getActiveTab() {
+async function getActiveTabId() {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-  return tabs[0] || null;
+  return tabs[0]?.id;
 }
 
 function collectOptions() {
@@ -40,42 +40,16 @@ function collectOptions() {
   };
 }
 
-function isInjectableUrl(url = '') {
-  return /^(https?:|file:)/.test(url);
-}
-
-async function ensureContentScriptReady(tab) {
-  if (!tab?.id) {
-    throw new Error('未找到活动标签页');
-  }
-
-  if (!isInjectableUrl(tab.url || '')) {
-    throw new Error('当前页面不支持（请在 http/https 网页使用，不支持 chrome:// 页面）');
-  }
-
-  try {
-    const probe = await chrome.tabs.sendMessage(tab.id, { type: 'PING' });
-    if (probe?.ok) return;
-  } catch {
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ['content.js']
-    });
-  }
-}
-
 el.collectBtn.addEventListener('click', async () => {
   try {
-    const tab = await getActiveTab();
-    if (!tab) {
+    const tabId = await getActiveTabId();
+    if (!tabId) {
       setStatus('未找到活动标签页');
       return;
     }
 
     setStatus('提取中...');
-    await ensureContentScriptReady(tab);
-
-    const response = await chrome.tabs.sendMessage(tab.id, {
+    const response = await chrome.tabs.sendMessage(tabId, {
       type: 'COLLECT_IMAGES',
       options: collectOptions()
     });
@@ -90,7 +64,7 @@ el.collectBtn.addEventListener('click', async () => {
     el.downloadBtn.disabled = latestImages.length === 0;
     setStatus(`提取完成：${latestImages.length} 张`);
   } catch (error) {
-    setStatus(`提取失败：${String(error.message || error)}`);
+    setStatus(`提取失败：${String(error)}`);
   }
 });
 

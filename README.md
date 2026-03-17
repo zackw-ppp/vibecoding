@@ -57,9 +57,6 @@
 - 点击提取没反应：
   - 刷新漫画网页后再点一次插件
   - 确认插件还在启用状态（`chrome://extensions/`）
-- 出现 `Could not establish connection. Receiving end does not exist.`：
-  - 先刷新目标网页，再点插件
-  - 确认你不是在 `chrome://`、扩展商店、或新标签页里使用（这些页面不允许注入）
 - 下载数量是 0：
   - 先滚动页面让图片加载
   - 把最小宽高调低

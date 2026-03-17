@@ -162,9 +162,12 @@ el.downloadBtn.addEventListener('click', async () => {
   if (!latestImages.length) return;
   setStatus('打包 ZIP 中...');
   try {
+    const tab = await getActiveTab();
     const response = await chrome.runtime.sendMessage({
       type: 'DOWNLOAD_IMAGES',
       images: latestImages,
+      tabId: tab?.id,
+      pageUrl: tab?.url,
       naming: {
         prefix: el.prefix.value,
         chapter: el.chapter.value
@@ -176,7 +179,8 @@ el.downloadBtn.addEventListener('click', async () => {
       return;
     }
 
-    setStatus(`ZIP 已开始下载：${response.zipName}（共 ${response.count} 张）`);
+    const skippedText = response.skipped ? `，跳过 ${response.skipped} 张` : '';
+    setStatus(`ZIP 已开始下载：${response.zipName}（成功 ${response.count} 张${skippedText}）`);
   } catch (error) {
     setStatus(`下载失败：${String(error)}`);
   }

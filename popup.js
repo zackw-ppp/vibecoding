@@ -180,6 +180,11 @@ el.downloadBtn.addEventListener('click', async () => {
     }
 
     const skippedText = response.skipped ? `，跳过 ${response.skipped} 张` : '';
+    if (response.mode === 'direct') {
+      setStatus(`ZIP 打包失败，已切换为单图下载（成功 ${response.count} 张${skippedText}）`);
+      return;
+    }
+
     setStatus(`ZIP 已开始下载：${response.zipName}（成功 ${response.count} 张${skippedText}）`);
   } catch (error) {
     setStatus(`下载失败：${String(error)}`);

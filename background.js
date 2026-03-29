@@ -176,6 +176,7 @@ async function fetchViaPage(tabId, imageUrl) {
 
   const [{ result } = {}] = await chrome.scripting.executeScript({
     target: { tabId },
+    world: 'MAIN',
     func: async (url) => {
       try {
         const response = await fetch(url, { credentials: 'include' });
@@ -223,6 +224,38 @@ async function fetchImageBytes(url, context) {
   }
 }
 
+async function downloadImagesDirectly(images, naming, context) {
+  const prefix = sanitizePart(naming?.prefix, 'manga');
+  const chapter = sanitizePart(naming?.chapter, 'chapter');
+  let count = 0;
+  let skipped = 0;
+
+  for (let idx = 0; idx < images.length; idx += 1) {
+    const image = images[idx];
+    const ext = extensionFromUrl(image.src);
+    const absoluteUrl = toAbsoluteUrl(image.src, context.pageUrl);
+    if (!absoluteUrl) {
+      skipped += 1;
+      continue;
+    }
+
+    const filename = `${prefix}_${chapter}/${prefix}_${chapter}_${pad(idx + 1)}.${ext}`;
+    try {
+      await chrome.downloads.download({
+        url: absoluteUrl,
+        filename,
+        saveAs: false,
+        conflictAction: 'uniquify'
+      });
+      count += 1;
+    } catch {
+      skipped += 1;
+    }
+  }
+
+  return { mode: 'direct', count, skipped };
+}
+
 async function buildAndDownloadZip(images, naming, context) {
   const prefix = sanitizePart(naming?.prefix, 'manga');
   const chapter = sanitizePart(naming?.chapter, 'chapter');
@@ -243,7 +276,15 @@ async function buildAndDownloadZip(images, naming, context) {
   }
 
   if (!files.length) {
-    throw new Error(`全部下载失败。${failures[0] || ''}`.trim());
+    const direct = await downloadImagesDirectly(images, naming, context);
+    if (!direct.count) {
+      throw new Error(`全部下载失败。${failures[0] || ''}`.trim());
+    }
+
+    return {
+      ...direct,
+      warnings: failures.slice(0, 3)
+    };
   }
 
   const zipName = `${prefix}_${chapter}.zip`;
@@ -261,6 +302,7 @@ async function buildAndDownloadZip(images, naming, context) {
   }
 
   return {
+    mode: 'zip',
     count: files.length,
     skipped: failures.length,
     zipName,

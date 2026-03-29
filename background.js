@@ -140,9 +140,70 @@ function buildZip(files) {
   return new Blob([localData, centralDir, endRecord], { type: 'application/zip' });
 }
 
+
+const HOTLINK_RULE_ID = 9001;
+
+async function withTemporaryHotlinkHeaders(imageUrl, pageUrl, task) {
+  if (!pageUrl || !chrome.declarativeNetRequest?.updateSessionRules) {
+    return task();
+  }
+
+  try {
+    const target = new URL(imageUrl);
+    const source = new URL(pageUrl);
+    await chrome.declarativeNetRequest.updateSessionRules({
+      removeRuleIds: [HOTLINK_RULE_ID],
+      addRules: [{
+        id: HOTLINK_RULE_ID,
+        priority: 1,
+        action: {
+          type: 'modifyHeaders',
+          requestHeaders: [
+            { header: 'referer', operation: 'set', value: pageUrl },
+            { header: 'origin', operation: 'set', value: source.origin }
+          ]
+        },
+        condition: {
+          requestDomains: [target.hostname],
+          resourceTypes: ['xmlhttprequest', 'image', 'media', 'other']
+        }
+      }]
+    });
+
+    return await task();
+  } catch {
+    return task();
+  } finally {
+    try {
+      await chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: [HOTLINK_RULE_ID] });
+    } catch {
+      // ignore cleanup errors
+    }
+  }
+}
+
 function sanitizePart(text, fallback) {
   const clean = String(text || '').trim().replace(/[\\/:*?"<>|]+/g, '_');
   return clean || fallback;
+}
+
+
+async function delay(ms) {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function retryFetch(task, retries = 2) {
+  let lastError = null;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      return await task();
+    } catch (error) {
+      lastError = error;
+      if (attempt === retries) break;
+      await delay(250 * (attempt + 1));
+    }
+  }
+  throw lastError;
 }
 
 function isForbiddenStatus(status) {
@@ -158,23 +219,25 @@ function toAbsoluteUrl(url, pageUrl) {
 }
 
 async function fetchViaBackground(url, pageUrl) {
-  const response = await fetch(url, {
-    credentials: 'include',
-    referrer: pageUrl || undefined,
-    referrerPolicy: 'no-referrer-when-downgrade'
-  });
+  return retryFetch(() => withTemporaryHotlinkHeaders(url, pageUrl, async () => {
+    const response = await fetch(url, {
+      credentials: 'include',
+      referrer: pageUrl || undefined,
+      referrerPolicy: 'no-referrer-when-downgrade'
+    });
 
-  if (!response.ok) {
-    throw new Error(`请求失败: ${response.status} ${url}`);
-  }
+    if (!response.ok) {
+      throw new Error(`请求失败: ${response.status} ${url}`);
+    }
 
-  return new Uint8Array(await response.arrayBuffer());
+    return new Uint8Array(await response.arrayBuffer());
+  }));
 }
 
 async function fetchViaPage(tabId, imageUrl) {
   if (!tabId) return null;
 
-  const [{ result } = {}] = await chrome.scripting.executeScript({
+  const [{ result } = {}] = await retryFetch(() => chrome.scripting.executeScript({
     target: { tabId },
     world: 'MAIN',
     func: async (url) => {
@@ -191,7 +254,7 @@ async function fetchViaPage(tabId, imageUrl) {
       }
     },
     args: [imageUrl]
-  });
+  }), 1);
 
   if (!result?.ok || !Array.isArray(result.bytes)) {
     throw new Error(result?.error || '页面上下文抓取失败');
@@ -241,12 +304,12 @@ async function downloadImagesDirectly(images, naming, context) {
 
     const filename = `${prefix}_${chapter}/${prefix}_${chapter}_${pad(idx + 1)}.${ext}`;
     try {
-      await chrome.downloads.download({
+      await withTemporaryHotlinkHeaders(absoluteUrl, context.pageUrl, () => chrome.downloads.download({
         url: absoluteUrl,
         filename,
         saveAs: false,
         conflictAction: 'uniquify'
-      });
+      }));
       count += 1;
     } catch {
       skipped += 1;
@@ -310,15 +373,37 @@ async function buildAndDownloadZip(images, naming, context) {
   };
 }
 
+async function runDownloadJob(message) {
+  const jobId = message.jobId;
+  try {
+    const result = await buildAndDownloadZip(message.images || [], message.naming || {}, {
+      tabId: message.tabId,
+      pageUrl: message.pageUrl
+    });
+
+    await chrome.storage.local.set({
+      lastDownloadResult: {
+        jobId,
+        ok: true,
+        ...result,
+        at: Date.now()
+      }
+    });
+  } catch (error) {
+    await chrome.storage.local.set({
+      lastDownloadResult: {
+        jobId,
+        ok: false,
+        error: String(error),
+        at: Date.now()
+      }
+    });
+  }
+}
+
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message?.type !== 'DOWNLOAD_IMAGES') return;
 
-  buildAndDownloadZip(message.images || [], message.naming || {}, {
-    tabId: message.tabId,
-    pageUrl: message.pageUrl
-  })
-    .then((result) => sendResponse({ ok: true, ...result }))
-    .catch((error) => sendResponse({ ok: false, error: String(error) }));
-
-  return true;
+  runDownloadJob(message);
+  sendResponse({ ok: true, accepted: true, jobId: message.jobId });
 });

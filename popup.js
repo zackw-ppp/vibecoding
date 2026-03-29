@@ -126,6 +126,20 @@ async function requestCollectImages(tabId, options, retry = true) {
   }
 }
 
+
+async function waitForDownloadResult(jobId, timeoutMs = 120000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const data = await chrome.storage.local.get('lastDownloadResult');
+    const result = data?.lastDownloadResult;
+    if (result && result.jobId === jobId) {
+      return result;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 800));
+  }
+  throw new Error('后台任务超时，请稍后到下载记录查看结果');
+}
+
 for (const slider of [el.minWidth, el.minHeight, el.minRatio, el.maxRatio]) {
   slider.addEventListener('input', syncSliderLabels);
 }
@@ -163,8 +177,10 @@ el.downloadBtn.addEventListener('click', async () => {
   setStatus('打包 ZIP 中...');
   try {
     const tab = await getActiveTab();
-    const response = await chrome.runtime.sendMessage({
+    const jobId = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const ack = await chrome.runtime.sendMessage({
       type: 'DOWNLOAD_IMAGES',
+      jobId,
       images: latestImages,
       tabId: tab?.id,
       pageUrl: tab?.url,
@@ -173,6 +189,14 @@ el.downloadBtn.addEventListener('click', async () => {
         chapter: el.chapter.value
       }
     });
+
+    if (!ack?.ok) {
+      setStatus(`下载失败：${ack?.error || 'unknown error'}`);
+      return;
+    }
+
+    setStatus('后台处理中，请稍等...');
+    const response = await waitForDownloadResult(jobId, 120000);
 
     if (!response?.ok) {
       setStatus(`下载失败：${response?.error || 'unknown error'}`);

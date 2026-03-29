@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Manga Image Extractor",
+  "description": "Extract vertically ordered manga images from the current page and download with sequential filenames.",
+  "version": "0.1.9",
+  "permissions": [
+    "activeTab",
+    "downloads",
+    "storage",
+    "tabs",
+    "scripting",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Manga Extractor"
+  }
+}

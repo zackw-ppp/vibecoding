@@ -40,6 +40,10 @@
   - 若全部图片都无法打包为 ZIP，插件会自动降级为“单图批量下载”（放在同名文件夹）
   - 仍失败时通常是站点防盗链更严格，可先在当前页手动打开该图片确认可访问，再重试打包
 
+- 下载失败：`URL.createObjectURL is not a function`
+  - 这是 MV3 Service Worker 环境限制导致
+  - 已改成 Data URL 下载 ZIP，不再依赖 `URL.createObjectURL`
+
 - 下载失败：`A listener indicated an asynchronous response ...`
   - 这是后台任务太久导致消息通道被关闭的典型报错（Pixiv 上更容易出现）
   - 现在已改为“先立即确认，再后台处理并回传结果”，避免通道超时

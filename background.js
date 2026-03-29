@@ -352,17 +352,13 @@ async function buildAndDownloadZip(images, naming, context) {
 
   const zipName = `${prefix}_${chapter}.zip`;
   const blob = buildZip(files);
-  const objectUrl = URL.createObjectURL(blob);
-  try {
-    await chrome.downloads.download({
-      url: objectUrl,
-      filename: zipName,
-      saveAs: false,
-      conflictAction: 'uniquify'
-    });
-  } finally {
-    setTimeout(() => URL.revokeObjectURL(objectUrl), 10_000);
-  }
+  const dataUrl = await blobToDataUrl(blob);
+  await chrome.downloads.download({
+    url: dataUrl,
+    filename: zipName,
+    saveAs: false,
+    conflictAction: 'uniquify'
+  });
 
   return {
     mode: 'zip',
@@ -371,6 +367,18 @@ async function buildAndDownloadZip(images, naming, context) {
     zipName,
     warnings: failures.slice(0, 3)
   };
+}
+
+
+async function blobToDataUrl(blob) {
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  let binary = '';
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.subarray(i, i + chunkSize);
+    binary += String.fromCharCode(...chunk);
+  }
+  return `data:${blob.type || 'application/octet-stream'};base64,${btoa(binary)}`;
 }
 
 async function runDownloadJob(message) {

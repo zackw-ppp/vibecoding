@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Manga Image Extractor",
   "description": "Extract vertically ordered manga images from the current page and download with sequential filenames.",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "permissions": [
     "activeTab",
     "downloads",

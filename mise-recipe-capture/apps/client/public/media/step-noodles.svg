@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#D8C696"/>
+      <stop offset="1" stop-color="#A98D60"/>
+    </linearGradient>
+    <filter id="s"><feDropShadow dy="12" stdDeviation="13" flood-opacity=".2"/></filter>
+  </defs>
+  <rect width="800" height="450" fill="url(#cloth)"/>
+  <path d="M0 355c143-44 264-35 380 6s264 39 420-22v111H0Z" fill="#866A4C" opacity=".28"/>
+  <g filter="url(#s)">
+    <ellipse cx="399" cy="249" rx="254" ry="146" fill="#F8F2DF"/>
+    <ellipse cx="399" cy="244" rx="219" ry="112" fill="#704126"/>
+    <g fill="none" stroke-linecap="round">
+      <path d="M220 234c68-75 123-43 174-3s104 49 181-27" stroke="#E4BC64" stroke-width="26"/>
+      <path d="M228 282c68-75 121-45 173-5s107 45 176-18" stroke="#DDAE4E" stroke-width="28"/>
+      <path d="M263 323c48-54 102-47 151-14s98 33 139-4" stroke="#EAC972" stroke-width="24"/>
+      <path d="M278 195c58 32 103 28 142-5s88-30 132 1" stroke="#E7C46B" stroke-width="22"/>
+    </g>
+    <g fill="#315F35">
+      <rect x="293" y="202" width="20" height="82" rx="9" transform="rotate(-38 303 243)"/>
+      <rect x="365" y="178" width="20" height="92" rx="9" transform="rotate(-8 375 224)"/>
+      <rect x="449" y="188" width="20" height="91" rx="9" transform="rotate(24 459 233)"/>
+      <rect x="505" y="223" width="19" height="75" rx="9" transform="rotate(45 514 260)"/>
+    </g>
+  </g>
+  <g fill="none" stroke="#F8F0DC" stroke-width="7" stroke-linecap="round">
+    <path d="M641 64l64 246"/>
+    <path d="M670 57l62 243"/>
+  </g>
+</svg>

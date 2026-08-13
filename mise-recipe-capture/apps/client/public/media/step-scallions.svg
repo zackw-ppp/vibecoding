@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="board" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#D8B27B"/>
+      <stop offset="1" stop-color="#B88654"/>
+    </linearGradient>
+    <filter id="s"><feDropShadow dy="10" stdDeviation="10" flood-opacity=".18"/></filter>
+  </defs>
+  <rect width="800" height="450" fill="#EDE1C9"/>
+  <rect x="82" y="48" width="636" height="354" rx="32" fill="url(#board)" filter="url(#s)"/>
+  <circle cx="666" cy="100" r="18" fill="#8B5E3E" opacity=".55"/>
+  <g stroke-linecap="round">
+    <g stroke="#F3E9C9" stroke-width="22">
+      <path d="M188 281l190-124"/>
+      <path d="M218 315l188-127"/>
+      <path d="M253 337l186-122"/>
+      <path d="M294 347l174-115"/>
+    </g>
+    <g stroke="#447B43" stroke-width="25">
+      <path d="M368 164l166-73"/>
+      <path d="M397 190l182-54"/>
+      <path d="M430 216l180-23"/>
+      <path d="M464 236l161 21"/>
+    </g>
+    <g stroke="#2E6038" stroke-width="6">
+      <path d="M505 104l65-45"/>
+      <path d="M544 143l79-22"/>
+      <path d="M575 195l72 11"/>
+    </g>
+  </g>
+  <g fill="#527F43">
+    <ellipse cx="195" cy="170" rx="16" ry="9" transform="rotate(-22 195 170)"/>
+    <ellipse cx="602" cy="320" rx="20" ry="10" transform="rotate(24 602 320)"/>
+    <ellipse cx="169" cy="343" rx="13" ry="7" transform="rotate(17 169 343)"/>
+  </g>
+</svg>

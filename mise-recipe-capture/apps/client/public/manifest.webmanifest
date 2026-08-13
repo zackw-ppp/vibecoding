@@ -1,0 +1,17 @@
+{
+  "name": "Mise Fixture Demo",
+  "short_name": "Mise",
+  "description": "An offline-ready, traceable recipe fixture demo.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbf6e9",
+  "theme_color": "#b65032",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

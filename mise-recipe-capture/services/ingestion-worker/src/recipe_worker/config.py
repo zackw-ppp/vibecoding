@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import tempfile
 from pathlib import Path
 from typing import Literal
 
@@ -27,7 +28,7 @@ class WorkerSettings(BaseSettings):
     supabase_url: AnyHttpUrl | None = None
     supabase_service_role_key: SecretStr | None = None
 
-    temp_root: Path = Path("/tmp/mise-ingestion")
+    temp_root: Path = Path(tempfile.gettempdir()) / "mise-ingestion"
     temp_disk_limit_gb: float = Field(default=5.0, gt=0, le=1_024)
     raw_media_ttl_hours: float = Field(default=24.0, gt=0, le=24)
     review_proxy_ttl_hours: float = Field(default=24.0, gt=0, le=24)

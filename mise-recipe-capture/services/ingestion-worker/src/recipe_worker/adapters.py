@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import ipaddress
 import json
 import re
@@ -40,7 +41,7 @@ _TRACKING_PARAMETERS = {
 
 @runtime_checkable
 class PlatformAdapter(Protocol):
-    platform: Platform
+    platform: ClassVar[Platform]
 
     def can_handle(self, url: str) -> bool: ...
 
@@ -159,9 +160,12 @@ class YouTubeAdapter(AllowlistedPlatformAdapter):
 
     def normalize_url(self, url: str) -> NormalizedUrl:
         normalized = super().normalize_url(url)
-        hostname = (urlsplit(url.strip()).hostname or "").lower().rstrip(".")
-        if hostname != "youtu.be" and re.fullmatch(
-            r"/[A-Za-z0-9_-]+/?", urlsplit(url.strip()).path
+        parsed = urlsplit(url.strip())
+        hostname = (parsed.hostname or "").lower().rstrip(".")
+        if (
+            hostname != "youtu.be"
+            and parsed.path != "/watch"
+            and self._is_short_host_path(parsed.path)
         ):
             raise UnsafeSourceUrlError("unsupported YouTube path")
         return normalized
@@ -289,7 +293,7 @@ FIXTURE_SCENARIOS = frozenset(
 
 
 class FixtureAdapter:
-    platform = Platform.FIXTURE
+    platform: ClassVar[Platform] = Platform.FIXTURE
 
     def can_handle(self, url: str) -> bool:
         try:
@@ -327,7 +331,7 @@ class FixtureAdapter:
     ) -> AcquiredMedia:
         if source.platform is not Platform.FIXTURE:
             raise UnsafeSourceUrlError("fixture adapter received a non-fixture source")
-        workspace.mkdir(parents=True, exist_ok=True)
+        await asyncio.to_thread(workspace.mkdir, parents=True, exist_ok=True)
         manifest = workspace / "fixture-source.json"
         payload = json.dumps(
             {
@@ -338,11 +342,12 @@ class FixtureAdapter:
             ensure_ascii=False,
             sort_keys=True,
         )
-        manifest.write_text(payload, encoding="utf-8")
+        await asyncio.to_thread(manifest.write_text, payload, encoding="utf-8")
+        manifest_stat = await asyncio.to_thread(manifest.stat)
         return AcquiredMedia(
             workspace=workspace,
             files=(manifest,),
-            total_bytes=manifest.stat().st_size,
+            total_bytes=manifest_stat.st_size,
             fixture=True,
         )
 

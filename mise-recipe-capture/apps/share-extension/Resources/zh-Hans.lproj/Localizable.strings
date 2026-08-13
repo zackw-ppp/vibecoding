@@ -1,0 +1,21 @@
+"share.status.saving" = "正在存储到 Mise…";
+"share.saved.title" = "已存储到 Mise";
+"share.saved.open_manually" = "已存储。打开 Mise 以完成导入。";
+"share.action.done" = "完成";
+"share.action.close" = "关闭";
+
+"share.error.title" = "无法存储到 Mise";
+"share.error.read" = "无法读取分享的项目，请重新分享。";
+"share.error.no_content" = "请分享网页链接、纯文本或图片。";
+"share.error.too_many_attachments" = "一次最多分享 %d 个项目。";
+"share.error.too_many_urls" = "一次最多分享 %d 个网页链接。";
+"share.error.invalid_url" = "仅支持有效的 http 或 https 网页链接。";
+"share.error.too_many_text_items" = "一次最多分享 %d 个文本项目。";
+"share.error.text_too_large" = "分享的文本过大。";
+"share.error.too_many_images" = "一次最多分享 %d 张图片。";
+"share.error.image_too_large" = "每张图片必须小于 %d MB。";
+"share.error.images_too_large" = "所选图片总大小不能超过 %d MB。";
+"share.error.invalid_image" = "分享的图片中有一张无效或过大，无法安全处理。";
+"share.error.app_group" = "此安装尚未配置 Mise 分享功能。";
+"share.error.invalid_content" = "无法安全存储分享的内容。";
+"share.error.save" = "Mise 无法存储分享的项目。请检查可用存储空间后重试。";

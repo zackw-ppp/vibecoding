@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <radialGradient id="water" cx=".42" cy=".38" r=".68">
+      <stop stop-color="#A8D3D0"/>
+      <stop offset="1" stop-color="#497C7C"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#A7A9A4"/>
+      <stop offset=".5" stop-color="#E2DFD3"/>
+      <stop offset="1" stop-color="#747873"/>
+    </linearGradient>
+    <filter id="s"><feDropShadow dy="14" stdDeviation="14" flood-opacity=".28"/></filter>
+  </defs>
+  <rect width="800" height="450" fill="#B99267"/>
+  <g filter="url(#s)">
+    <ellipse cx="398" cy="238" rx="270" ry="166" fill="url(#metal)"/>
+    <ellipse cx="398" cy="234" rx="227" ry="129" fill="url(#water)"/>
+    <path d="M140 197L25 163l-14 42 132 34zM656 197l119-34 13 42-132 34z" fill="#585A56"/>
+  </g>
+  <g fill="none" stroke="#E8C56D" stroke-width="22" stroke-linecap="round">
+    <path d="M237 231c51-49 99-45 142-5s92 37 153-15"/>
+    <path d="M248 276c54-45 104-39 145-3s91 32 149-14"/>
+    <path d="M291 315c43-32 83-27 119-3s72 24 108-4"/>
+  </g>
+  <g fill="#E9F4EC" opacity=".7">
+    <circle cx="287" cy="190" r="8"/>
+    <circle cx="446" cy="183" r="6"/>
+    <circle cx="508" cy="271" r="9"/>
+    <circle cx="362" cy="292" r="5"/>
+  </g>
+  <g fill="none" stroke="#F0E7D5" stroke-width="7" stroke-linecap="round" opacity=".7">
+    <path d="M301 100c-18-26 9-40-1-66"/>
+    <path d="M402 90c-16-26 11-41 2-68"/>
+    <path d="M503 104c-17-27 10-41 1-68"/>
+  </g>
+</svg>

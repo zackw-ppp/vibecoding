@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <radialGradient id="pan" cx=".42" cy=".35" r=".7">
+      <stop stop-color="#62473B"/>
+      <stop offset="1" stop-color="#201C1A"/>
+    </radialGradient>
+    <radialGradient id="sauce" cx=".38" cy=".28" r=".75">
+      <stop stop-color="#9A5A31"/>
+      <stop offset=".7" stop-color="#552B1E"/>
+      <stop offset="1" stop-color="#351B15"/>
+    </radialGradient>
+    <filter id="shadow"><feDropShadow dy="16" stdDeviation="15" flood-opacity=".25"/></filter>
+  </defs>
+  <rect width="800" height="450" fill="#D1B58F"/>
+  <g filter="url(#shadow)">
+    <ellipse cx="400" cy="252" rx="270" ry="160" fill="url(#pan)"/>
+    <ellipse cx="400" cy="252" rx="226" ry="125" fill="url(#sauce)"/>
+    <path d="M614 281l165 58-14 45-179-70z" fill="#26211E"/>
+  </g>
+  <g fill="#DCA967" opacity=".8">
+    <circle cx="283" cy="224" r="8"/>
+    <circle cx="354" cy="181" r="6"/>
+    <circle cx="448" cy="310" r="9"/>
+    <circle cx="529" cy="238" r="7"/>
+    <circle cx="379" cy="283" r="5"/>
+    <circle cx="492" cy="185" r="4"/>
+  </g>
+  <path d="M160 80c99 57 204 70 315 37" fill="none" stroke="#F1E4CA" stroke-width="9" stroke-linecap="round" opacity=".65"/>
+  <g fill="none" stroke="#EDE2CE" stroke-width="6" stroke-linecap="round" opacity=".62">
+    <path d="M288 120c-20-31 13-45 0-73"/>
+    <path d="M396 105c-17-25 12-39 2-66"/>
+    <path d="M504 120c-15-28 12-43 5-69"/>
+  </g>
+</svg>

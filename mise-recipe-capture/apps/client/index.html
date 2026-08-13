@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" data-theme="warm-kitchen">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Mise is an offline-ready, traceable recipe fixture demo."
+    />
+    <meta name="theme-color" content="#b65032" />
+    <title>Mise</title>
+    <script>
+      try {
+        const saved = JSON.parse(localStorage.getItem('mise-fixture-v1') || '{}')
+        const preference = saved.state?.themePreference || 'warm-kitchen'
+        const theme =
+          preference === 'system'
+            ? matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'midnight-cook'
+              : 'warm-kitchen'
+            : preference
+        document.documentElement.dataset.theme = theme
+      } catch {
+        document.documentElement.dataset.theme = 'warm-kitchen'
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

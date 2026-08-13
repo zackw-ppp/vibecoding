@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="table" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#B8C3A4"/>
+      <stop offset="1" stop-color="#7F9279"/>
+    </linearGradient>
+    <radialGradient id="plate" cx=".42" cy=".32" r=".72">
+      <stop stop-color="#FFFDF2"/>
+      <stop offset="1" stop-color="#D7D7CB"/>
+    </radialGradient>
+    <linearGradient id="fish" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#F0E5CE"/>
+      <stop offset=".5" stop-color="#CABBA5"/>
+      <stop offset="1" stop-color="#8C8175"/>
+    </linearGradient>
+    <filter id="s"><feDropShadow dy="18" stdDeviation="17" flood-opacity=".22"/></filter>
+  </defs>
+  <rect width="800" height="600" fill="url(#table)"/>
+  <g filter="url(#s)">
+    <ellipse cx="401" cy="328" rx="301" ry="190" fill="url(#plate)"/>
+    <ellipse cx="401" cy="334" rx="254" ry="142" fill="#A87546" opacity=".45"/>
+    <path d="M203 327c58-101 194-134 327-61l92-66-29 107 45 81-108-31c-134 80-275 63-327-30Z" fill="url(#fish)" stroke="#766B5E" stroke-width="7"/>
+    <circle cx="259" cy="303" r="13" fill="#292822"/>
+    <circle cx="255" cy="298" r="4" fill="#F7F3E7"/>
+    <path d="M296 356c88-38 161-44 229-22" fill="none" stroke="#948777" stroke-width="6" stroke-linecap="round"/>
+    <g stroke="#A69887" stroke-width="5" opacity=".7">
+      <path d="M348 267l-17 76"/>
+      <path d="M390 255l-13 84"/>
+      <path d="M434 254l-8 78"/>
+      <path d="M477 263l-4 59"/>
+    </g>
+    <g fill="none" stroke-linecap="round">
+      <g stroke="#2F6B42" stroke-width="11">
+        <path d="M270 242l271 137"/>
+        <path d="M295 222l262 145"/>
+        <path d="M250 366l281-125"/>
+      </g>
+      <g stroke="#E5D5A5" stroke-width="8">
+        <path d="M282 247l248 123"/>
+        <path d="M264 356l252-108"/>
+      </g>
+    </g>
+    <g fill="#C84C31">
+      <rect x="348" y="231" width="9" height="82" rx="4" transform="rotate(35 352 272)"/>
+      <rect x="438" y="315" width="9" height="77" rx="4" transform="rotate(58 442 353)"/>
+    </g>
+  </g>
+  <g fill="none" stroke="#E6EAD9" stroke-width="7" stroke-linecap="round" opacity=".6">
+    <path d="M292 148c-18-28 10-43 0-71"/>
+    <path d="M400 128c-17-27 11-43 2-71"/>
+    <path d="M508 147c-16-29 12-45 4-73"/>
+  </g>
+</svg>

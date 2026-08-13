@@ -1,0 +1,21 @@
+"share.status.saving" = "Saving to Mise…";
+"share.saved.title" = "Saved to Mise";
+"share.saved.open_manually" = "Saved. Open Mise to finish importing.";
+"share.action.done" = "Done";
+"share.action.close" = "Close";
+
+"share.error.title" = "Couldn’t Save to Mise";
+"share.error.read" = "The shared item couldn’t be read. Try sharing it again.";
+"share.error.no_content" = "Share a web URL, plain text, or an image.";
+"share.error.too_many_attachments" = "Share no more than %d items at once.";
+"share.error.too_many_urls" = "Share no more than %d web URLs at once.";
+"share.error.invalid_url" = "Only valid http or https web URLs are supported.";
+"share.error.too_many_text_items" = "Share no more than %d text items at once.";
+"share.error.text_too_large" = "The shared text is too large.";
+"share.error.too_many_images" = "Share no more than %d images at once.";
+"share.error.image_too_large" = "Each image must be smaller than %d MB.";
+"share.error.images_too_large" = "The selected images must total no more than %d MB.";
+"share.error.invalid_image" = "One of the shared images is invalid or too large to process safely.";
+"share.error.app_group" = "Mise sharing isn’t configured on this installation.";
+"share.error.invalid_content" = "The shared content couldn’t be saved safely.";
+"share.error.save" = "Mise couldn’t save the shared item. Check available storage and try again.";
